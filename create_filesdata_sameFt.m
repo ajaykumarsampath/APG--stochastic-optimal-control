@@ -32,11 +32,6 @@ filedata={
     %{'Data_files/GPAD_THETA.h',    'GPAD_THETA',          Ptree.Theta,            (Nd-1)*sys.nu*sys.nx+GN_numel*sys.nu}
     %{'Data_files/GPAD_D.h',            'GPAD_D',          ptree.d,                Nd*ny*sys.nx}
     %{'Data_files/GPAD_F.h',            'GPAD_F',          ptree.f,                (Nd-1)*sys.nx*sys.nx+GN_numel*sys.nx}
-    {'Data_files/GPAD_Fc.h',                'F',            sys.F,                 ny*sys.nx*Nd}
-    {'Data_files/GPAD_Gc.h',                'G',            sys.G,                 ny*sys.nu*Nd}
-    {'Data_files/GPAD_g.h',                 'g',                g,                 ny*Nd}
-    {'Data_files/GPAD_A.h',             'sys_A',            sys.A,                 sys.nx*sys.nx*(Nd+Ns)}
-    {'Data_files/GPAD_B.h',             'sys_B',            sys.B,                 sys.nx*sys.nu*(Nd+Ns)}
     {'Data_files/GPAD_Vf.h',             'V_Vf',             V.Vf,                 sys.nx*sys.nx*Ns}
     %{'Data_files/GPAD_C.h',            'GPAD_C',          Ptree.c,                 Nd*sys.nx}
     %{'Data_files/GPAD_Sigma.h',    'GPAD_SIGMA',      Ptree.sigma,                 Nd*sys.nu}
@@ -44,6 +39,23 @@ filedata={
     {'Data_files/GPAD_P.h',             'GPAD_P',            P_test,                 sys.nx*sys.nx}
     };
 
+if(ops_system.sys_uncert)
+    filedata(size(filedata,1)+1:size(filedata,1)+5,1)={
+        {'Data_files/GPAD_Fc.h',                'F',            sys.F,                 ny*sys.nx*Nd}
+        {'Data_files/GPAD_Gc.h',                'G',            sys.G,                 ny*sys.nu*Nd}
+        {'Data_files/GPAD_g.h',                 'g',                g,                 ny*Nd}
+        {'Data_files/GPAD_A.h',             'sys_A',            sys.A,                 sys.nx*sys.nx*(Nd+Ns)}
+        {'Data_files/GPAD_B.h',             'sys_B',            sys.B,                 sys.nx*sys.nu*(Nd+Ns)}
+        };
+else
+    filedata(size(filedata,1)+1:size(filedata,1)+5,1)={
+        {'Data_files/GPAD_Fc.h',                'F',            sys.F{1},                 ny*sys.nx}
+        {'Data_files/GPAD_Gc.h',                'G',            sys.G{1},                 ny*sys.nu}
+        {'Data_files/GPAD_g.h',                 'g',            sys.g{1},                 ny}
+        {'Data_files/GPAD_A.h',             'sys_A',            sys.A{1},                 sys.nx*sys.nx}
+        {'Data_files/GPAD_B.h',             'sys_B',            sys.B{1},                 sys.nx*sys.nu}
+        };
+end
 %%
 for kk=1:length(filedata(:,1))
     m_matrix =filedata{kk};

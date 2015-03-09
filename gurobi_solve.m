@@ -21,12 +21,11 @@ Qsps=sparse(V.Q);
 Rsps=sparse(V.R);
 PolyConstsps=sparse([sys.F sys.G]);
 
-DynamicSps=sparse((non_leaf_node+K)*sys.nx,nvar*non_leaf_node+K*sys.nx);
+%DynamicSps=sparse((non_leaf_node+K)*sys.nx,nvar*non_leaf_node+K*sys.nx);
 krow=nc*non_leaf_node+nc_t*K;
-%DynamicSps(1:sys.nx,1:sys.nx)=speye(sys.nx);
 
 node_pos=0;
-%JJ=zeros((child+K)*sys.nx,nvar*child+K*sys.nx);
+
 for i=1:non_leaf_node
     %{
     for j=1:sys.nx
@@ -42,23 +41,28 @@ for i=1:non_leaf_node
     model.A((i-1)*nc+1:i*nc,(i-1)*nvar+1:i*nvar)=PolyConstsps;
     %if(nchild>1)
     for j=1:nchild
-        DynamicSps((node_pos+j-1)*sys.nx+1:(node_pos+j)*sys.nx,(i-1)*nvar+1:i*nvar)...
+        %DynamicSps((node_pos+j-1)*sys.nx+1:(node_pos+j)*sys.nx,(i-1)*nvar+1:i*nvar)...
+        %    =sparse([sys.A{node_pos+j} sys.B{node_pos+j}]);
+        model.A(krow+(node_pos+j-1)*sys.nx+1:krow+(node_pos+j)*sys.nx,(i-1)*nvar+1:i*nvar)...
             =sparse([sys.A{node_pos+j} sys.B{node_pos+j}]);
-        model.rhs(krow+(node_pos+j-1)*sys.nx+1:krow+(node_pos+j)*sys.nx,1)=-Tree.value(node_pos+j,:)';
+        model.rhs(krow+(node_pos+j-1)*sys.nx+1:krow+(node_pos+j)*sys.nx,1)=-Tree.value(node_pos+j+1,:)';
         if(i<=non_leaf_node-K)
-            DynamicSps((node_pos+j-1)*sys.nx+1:(node_pos+j)*sys.nx,(node_pos+j)*nvar+1:...
+            %DynamicSps((node_pos+j-1)*sys.nx+1:(node_pos+j)*sys.nx,(node_pos+j)*nvar+1:...
+            %    (node_pos+j)*nvar+sys.nx)=-speye(sys.nx);
+            model.A(krow+(node_pos+j-1)*sys.nx+1:krow+(node_pos+j)*sys.nx,(node_pos+j)*nvar+1:...
                 (node_pos+j)*nvar+sys.nx)=-speye(sys.nx);
         else
-            DynamicSps((node_pos+j-1)*sys.nx+1:(node_pos+j)*sys.nx,non_leaf_node*nvar+(node_pos-non_leaf_node+j)*sys.nx+1:...
+            %DynamicSps((node_pos+j-1)*sys.nx+1:(node_pos+j)*sys.nx,non_leaf_node*nvar+(node_pos-non_leaf_node+j)*sys.nx+1:...
+             %   non_leaf_node*nvar+(node_pos-non_leaf_node+j+1)*sys.nx)=-speye(sys.nx);
+            model.A(krow+(node_pos+j-1)*sys.nx+1:krow+(node_pos+j)*sys.nx,non_leaf_node*nvar+(node_pos-non_leaf_node+j)*sys.nx+1:...
                 non_leaf_node*nvar+(node_pos-non_leaf_node+j+1)*sys.nx)=-speye(sys.nx);
-        end
-
+        end    
     end
-    
     node_pos=node_pos+nchild;
 end
 model.rhs(1:nc*non_leaf_node)=kron(ones(non_leaf_node,1),sys.g);
-DynamicSps((non_leaf_node+K-1)*sys.nx+1:(non_leaf_node+K)*sys.nx,1:sys.nx)=speye(sys.nx);
+%DynamicSps((non_leaf_node+K-1)*sys.nx+1:(non_leaf_node+K)*sys.nx,1:sys.nx)=speye(sys.nx);
+model.A(end-sys.nx+1:end,1:sys.nx)=speye(sys.nx);
 %JJ=full(model.A);
 for i=1:K
     %{
@@ -72,9 +76,10 @@ for i=1:K
         sparse(sys.Ft{i});
     model.rhs(nc*non_leaf_node+(i-1)*nc_t+1:nc*non_leaf_node+i*nc_t)=sys.gt{i};
 end
-model.A(nc*non_leaf_node+nc_t*K+1:(nc+sys.nx)*non_leaf_node+(nc_t+sys.nx)*K,1:nvar*non_leaf_node+sys.nx*K)=DynamicSps;
+%model.A(nc*non_leaf_node+nc_t*K+1:(nc+sys.nx)*non_leaf_node+(nc_t+sys.nx)*K,1:nvar*non_leaf_node+sys.nx*K)=DynamicSps;
 model.sense=[repmat('<',nc*non_leaf_node+nc_t*K,1);repmat('=',(non_leaf_node+K)*sys.nx,1)];
 model.obj=zeros(non_leaf_node*nvar+K*sys.nx,1);
 model.lb=-inf*ones(non_leaf_node*nvar+K*sys.nx,1);
+
 end
 

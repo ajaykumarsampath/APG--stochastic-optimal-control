@@ -84,6 +84,7 @@ Dimensions = {
     {'DIM_GPAD_K_GAIN ', sys.nu*sys.nx*length(Tree.children),'Dimension of K (total number of elements)'}
     {'test_size',        Test_points,'Number of test cases'}
     {'test_cuda',        test_cuda,'Check is it in testing mode'}
+    {'multi_uncertanity', ops_system.sys_uncert, 'The system contain multiplicative uncertanity'}
     };
 
 

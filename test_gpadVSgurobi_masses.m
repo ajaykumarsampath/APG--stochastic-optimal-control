@@ -8,7 +8,7 @@ clear all;
 close all;
 clear model;
 clc;
-Nm=5; % Number of masses
+Nm=10; % Number of masses
 T_sampling=0.5;
 ops_masses=struct('Ts',T_sampling,'xmin', ...
     -4*ones(2*Nm,1), 'xmax', 4*ones(2*Nm,1), 'umin', -2*ones(Nm-1,1),'umax',...
@@ -19,7 +19,7 @@ ops_system.sys_uncert=0;
 ops_system.ops_masses=ops_masses;
 %sys_no_precond=system_masses(Nm,ops_masses);
 various_predict_horz=10;%prediction horizon
-Test_points=1;
+Test_points=100;
 x_rand=4*rand(ops_system.nx,Test_points)-2;
 time_gpad=cell(Test_points,1);
 U_max=zeros(2,Test_points);
@@ -28,15 +28,15 @@ U_min=zeros(2,Test_points);
 test_cuda=0;
 %% Yalmip details
 
-details_solvers.IP=1;
+details_solvers.IP=0;
 details_solvers.method=details_solvers.IP*1;
-time_solver=zeros(Test_points,details_solvers.method+2);
+time_solver=zeros(details_solvers.method+2,Test_points);
 result.u=cell(details_solvers.method+1,1);
 
 params.outputflag=0;
 %% Generation of tree
-scenario_size=[2 1 1];
-for N_prb_steps=3:length(scenario_size)
+scenario_size=[2 2 2 2 2 2 2  ];
+for N_prb_steps=7:length(scenario_size)
     for no_of_pred=1:length(various_predict_horz)
         %ops_system.Np=various_predict_horz(no_of_pred);
         ops.N=various_predict_horz(no_of_pred); %step 2: argmin of the lagrangian using dynamic programming
@@ -56,7 +56,7 @@ for N_prb_steps=3:length(scenario_size)
                     ops.prob{i,1}=kron(ones(pm,1),pd/sum(pd));
                 end
             else
-                ops.prob{i,1}=ones(1,Ns);
+                ops.prob{i,1}=ones(Ns,1);
             end
         end
         tic
@@ -89,6 +89,8 @@ for N_prb_steps=3:length(scenario_size)
             V.Vf{i}=dare(sys_no_precond.A{1},sys_no_precond.B{1},r(i)*V.Q,r(i)*V.R);
             %V.Vf{i}=dare(sys_no_precond.A,sys_no_precond.B,r(i)*V.Q,r(i)*V.R);
         end
+        %normalizing constraints
+        sys_no_precond=Normalise_constraints(sys_no_precond);
         %% preconditioning the system and solve the system using dgpad.
         
         [sys,Hessian_iapp]=calculate_diffnt_precondition_matrix(sys_no_precond,V,Tree...
@@ -97,7 +99,7 @@ for N_prb_steps=3:length(scenario_size)
         Ptree=GPAD_dynamic_formul_precond_multip(sys,V,Tree);
         toc
         
-        ops_GPAD.steps=200;
+        ops_GPAD.steps=10;
         ops_GPAD.primal_inf=1e-3;
         ops_GPAD.dual_gap=10e-3;
         ops_GPAD.alpha=1/calculate_Lipschitz(sys,V,Tree);
@@ -108,11 +110,12 @@ for N_prb_steps=3:length(scenario_size)
             [yalmip_tree{1}, yalmip_const_time{1}]=yalmip_primal_multiple(sys_no_precond,V,Tree);%yalmip variable
             
         end
-        
+        tic
         model=gurobi_solve(sys_no_precond,V,Tree);
+        time_gurobi=toc;
         %}
         max_size=zeros(Test_points,length(Tree.stage));
-        
+        infeasible_points=0;
         for kk=1:Test_points
             
             ops_GPAD.x0=x_rand(:,kk);
@@ -128,28 +131,38 @@ for N_prb_steps=3:length(scenario_size)
             tic
             results=gurobi(model,params);
             time_solver(1,kk)=toc;
-            time_solver(2,kk)=results.runtime;
-            nvar=sys_no_precond.nx+sys_no_precond.nu;
-            non_leave_nodes=size(Tree.children,1);
-            for jj=1:length(Tree.prob)
-                if(jj<=non_leave_nodes)
-                    Zgurobi{1,1}(:,jj)=results.x((jj-1)*nvar+1:(jj-1)*nvar+sys_no_precond.nx,1);
-                    Zgurobi{1,2}(:,jj)=results.x((jj-1)*nvar+sys_no_precond.nx+1:jj*nvar,1);
+            if(strcmp(results.status,'OPTIMAL'))
+                time_solver(2,kk)=results.runtime;
+                nvar=sys_no_precond.nx+sys_no_precond.nu;
+                non_leave_nodes=size(Tree.children,1);
+                if(Test_points>1)
+                    result.u{1}(:,kk)=results.x(sys_no_precond.nx+1:nvar,1);
                 else
-                    Zgurobi{1,1}(:,jj)=results.x(non_leave_nodes*nvar+(jj-non_leave_nodes-1)...
-                        *sys_no_precond.nx+1:non_leave_nodes*nvar+(jj-non_leave_nodes)*sys_no_precond.nx);
+                    for jj=1:length(Tree.prob)
+                        if(jj<=non_leave_nodes)
+                            Zgurobi{1,1}(:,jj)=results.x((jj-1)*nvar+1:(jj-1)*nvar+sys_no_precond.nx,1);
+                            Zgurobi{1,2}(:,jj)=results.x((jj-1)*nvar+sys_no_precond.nx+1:jj*nvar,1);
+                        else
+                            Zgurobi{1,1}(:,jj)=results.x(non_leave_nodes*nvar+(jj-non_leave_nodes-1)...
+                                *sys_no_precond.nx+1:non_leave_nodes*nvar+(jj-non_leave_nodes)*sys_no_precond.nx);
+                        end
+                    end
                 end
+            else
+                infeasible_points=infeasible_points+1;
+                disp('Error');
             end
             
-            %{
             %GPAD
+            if(kk==1)
             [Z_gpad_pre,Y_gpad_pre,time_gpad{kk}]=GPAD_multiple(sys,Ptree,Tree,V,ops_GPAD);
-            if(~isfield(time_gpad{kk},'iterate'))
-                time_gpad{kk}.iterate=ops_GPAD.steps;
-            end
+            %if(~isfield(time_gpad{kk},'iterate'))
+                %time_gpad{kk}.iterate=ops_GPAD.steps;
+            %end
             %max(max(Z_yalmip{1,2}(:,:)-Z_gpad_pre.U(:,:)))
-            U_max(2,kk)=max(max(Z_gpad_pre.U-Z_yalmip{1,2}));
-            U_min(2,kk)=min(min(Z_gpad_pre.U-Z_yalmip{1,2}));
+            %U_max(2,kk)=max(max(Z_gpad_pre.U-Z_yalmip{1,2}));
+            %U_min(2,kk)=min(min(Z_gpad_pre.U-Z_yalmip{1,2}));
+            end
             %dual_gap(2,kk)=time_gpad{kk}.dual_gap;
             %}
         end
@@ -173,18 +186,20 @@ if(test_cuda)
     assert(norm(Zyalmip_dp{1,2}-Zdgpad.U,inf)<1e-4);
 end
 %%
-%transfer_multiple_data
+transfer_multiple_data
 
 
 figure(1)
 plot(time_solver(1,:));
 hold all;
 plot(time_solver(2,:));
-plot(time_solver(3,:));
+if(details_solvers.method)
+    plot(time_solver(3,:));
+end
 
-mean(time_solver(1,:))
-mean(time_solver(2,:))
-
+%mean(time_solver(1,:))
+sum(time_solver(2,:))/(Test_points-infeasible_points)
+max(time_solver(2,:))
 %{
 for i=1:Test_points
     iterates(1,i)=time_gpad{i,1}.iterate;
