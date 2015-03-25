@@ -35,8 +35,8 @@ result.u=cell(details_solvers.method+1,1);
 
 params.outputflag=0;
 %% Generation of tree
-scenario_size=[2 2 2 2 2 2 2  ];
-for N_prb_steps=7:length(scenario_size)
+scenario_size=[5 1 1 ];
+for N_prb_steps=3:length(scenario_size)
     for no_of_pred=1:length(various_predict_horz)
         %ops_system.Np=various_predict_horz(no_of_pred);
         ops.N=various_predict_horz(no_of_pred); %step 2: argmin of the lagrangian using dynamic programming
@@ -186,7 +186,7 @@ if(test_cuda)
     assert(norm(Zyalmip_dp{1,2}-Zdgpad.U,inf)<1e-4);
 end
 %%
-transfer_multiple_data
+%transfer_multiple_data
 
 
 figure(1)

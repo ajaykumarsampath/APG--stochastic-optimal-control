@@ -118,7 +118,47 @@ ylabel('Speedup')
 %% Normalised data 
 result_data=cell(3,2);
 gurobi_ip=cell(3,1);
-%prediction hoizon 
+%prediction horizon
+result_data{1,1}=[10 20 30 40 50 60;...
+    0.2489 0.4140 0.6913 0.8435 1.3154 1.5154 ;...
+    0.1568 0.2616 0.4446 0.5568 0.8210 0.9710 ;...
+    0.0764 0.1611 0.2769 0.3571 0.4601 0.5730 ]';
+result_data{1,2}=[10 20 30 40 50 60;...
+    1.9333 2.723 3.867 5.2063 7.5283 5.2695;...
+    1.2681 1.054 2.565 2.7959 4.0952 3.8943;...
+    0.1745 0.503 1.011 0.8983 1.3693 1.2693]';
+gurobi_ip{1,1}=[10 20 30 40 50 60;...
+    5.5781 10.8177 15.1898 20.6732 22.3625 26.6361;...
+    7.4076 13.3254 20.9680 24.6445 28.5038 33.8569]';
+
+figure(1)
+semilogy(result_data{1,1}(:,1),result_data{1,1}(:,2),'-s','Linewidth',2,'MarkerSize',10);
+hold all;
+semilogy(result_data{1,1}(:,1),result_data{1,1}(:,3),'-s','Linewidth',2,'MarkerSize',10);
+semilogy(result_data{1,1}(:,1),result_data{1,1}(:,4),'-s','Linewidth',2,'MarkerSize',10);
+semilogy(gurobi_ip{1,1}(:,1),gurobi_ip{1,1}(:,2),'-s','Linewidth',2,'MarkerSize',10);
+legend('APG-0.005','APG-0.01','APG-0.05','Gurobi-IP')
+xlabel('prediction horizon','FontSize',20);
+ylabel('average time (sec)','FontSize',20);
+axis tight;
+grid on;
+
+figure(2)
+semilogy(result_data{1,2}(:,1),result_data{1,2}(:,2),'-s','Linewidth',2,'MarkerSize',10);
+hold all;
+semilogy(result_data{1,2}(:,1),result_data{1,2}(:,3),'-s','Linewidth',2,'MarkerSize',10);
+semilogy(result_data{1,1}(:,1),result_data{1,1}(:,4),'-s','Linewidth',2,'MarkerSize',10);
+semilogy(gurobi_ip{1,1}(:,1),gurobi_ip{1,1}(:,3),'-s');
+legend('APG-0.005','APG-0.01','APG-0.05','Gurobi-IP')
+xlabel('prediction horizon','FontSize',20);
+ylabel('average time (sec)','FontSize',20);
+axis tight;
+grid on;
+
+%% Normalised data 
+result_data=cell(3,2);
+gurobi_ip=cell(3,1);
+%Scenarios   
 result_data{1,1}=[128 256 512 1024 2048 4096 8192;...
     0.0433 0.0805 0.0795 0.1350 0.2419 0.6822 1.3135;...
     0.0316 0.0512 0.0573 0.1020 0.1707 0.4483 0.8109;...
