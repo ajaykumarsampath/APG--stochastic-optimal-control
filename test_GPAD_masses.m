@@ -112,7 +112,7 @@ for N_prb_steps=3:length(scenario_size)
                 tree_solver_settings.gurobi.method=0;
                 [yalmip_tree{details_solvers.AS*2}, yalmip_const_time{2}]=yalmip_primal_multiple(sys_no_precond,V,Tree...
                     ,tree_solver_settings);%yalmip variable
-                nvar*child+K*sys.nx
+                %nvar*child+K*sys.nx
                 if(details_solvers.qpoases)
                     %qpOASES
                     tree_solver_settings= sdpsettings('solver','qpoases','verbose',0,'cachesolvers',1);
@@ -155,9 +155,9 @@ for N_prb_steps=3:length(scenario_size)
                 time_solver{kk,jj}.yalmip_cost=Z_yalmip{1,3};
             end
             
-            %{
+            %
             %GPAD
-            [Z_gpad_pre,Y_gpad_pre,time_gpad{kk}]=GPAD_multiple(sys,Ptree,Tree,V,ops_GPAD);
+            [Z_gpad_pre,Y_gpad_pre,time_gpad{kk}]=GPAD_algorithm_SMPC(sys,Ptree,Tree,V,ops_GPAD);
             if(~isfield(time_gpad{kk},'iterate'))
                 time_gpad{kk}.iterate=ops_GPAD.steps;
             end

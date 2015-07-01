@@ -155,7 +155,7 @@ for N_prb_steps=3:length(scenario_size)
             
             %GPAD
             if(kk==1)
-            [Z_gpad_pre,Y_gpad_pre,time_gpad{kk}]=GPAD_multiple(sys,Ptree,Tree,V,ops_GPAD);
+            [Z_gpad_pre,Y_gpad_pre,time_gpad{kk}]=GPAD_algorithm_SMPC(sys,Ptree,Tree,V,ops_GPAD);
             %if(~isfield(time_gpad{kk},'iterate'))
                 %time_gpad{kk}.iterate=ops_GPAD.steps;
             %end
