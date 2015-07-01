@@ -1,4 +1,4 @@
-function [ Z,Y,details] = GPAD_multiple(sys,Ptree,Tree,V,ops)
+function [ Z,Y,details] = GPAD_algorithm_multiple(sys,Ptree,Tree,V,ops)
 %This function is implements the GPAD algorithm to solve an optimization
 %problem. The inputs the system are the system dynamics, the tree
 %structure, all the off-line elements that are calculated earlier that are
