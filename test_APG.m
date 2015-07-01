@@ -1,8 +1,6 @@
 %%
 % This function generates a system with different terminal functions and constraints but
 % with same size. The constraint are preconditioned accodingly.
-% We solve the method using different methods. First formulated using
-% 1) Gurobi-IP 2) Gurobi-AS 3) qpOASES 4)QPC-IP 5)QPC-AS
 
 clear all;
 close all;
@@ -15,23 +13,20 @@ ops_masses=struct('Ts',T_sampling,'xmin', ...
 
 ops_system.nx=2*Nm;
 ops_system.nu=Nm-1;
-ops_system.sys_uncert=0;
+ops_system.sys_uncert=0; % only additive: 1 for multiplicative 
+
 ops_system.ops_masses=ops_masses;
 
-predict_horz=10;%prediction horizon
+predict_horz=10;% prediction horizon
+scenario_size=[2 2 1]; % branching factor
 
 Test_points=100; % sample test points
-
 x_rand=4*rand(ops_system.nx,Test_points)-2;
 
 time_gpad=cell(Test_points,1);
-U_max=zeros(2,Test_points);
-U_min=zeros(2,Test_points);
-
 
 %% Generation of tree
-scenario_size=[2 2 1];
-ops_tree.N=predict_horz; %step 2: argmin of the lagrangian using dynamic programming
+ops_tree.N=predict_horz; 
 ops_tree.brch_ftr=ones(ops_tree.N,1);
 ops_tree.brch_ftr(1:length(scenario_size))=scenario_size;
 Ns=prod(ops_tree.brch_ftr);
