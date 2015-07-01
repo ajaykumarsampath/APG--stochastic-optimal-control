@@ -1,8 +1,9 @@
-# gpad_multiplicative
+# APG-stochatic-optimal control problem
+
 This repository contains the matlab implementaion of the APG algorithm to solve the 
 stochatic optimal control problem for a system with both multiplicative and 
-additive disturbances. 
+additive disturbances.
 
-As a test case, the spring-mass system is used. 
+The main algrithm is in the 
 
 This repository alsi consistes of the 
