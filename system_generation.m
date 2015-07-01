@@ -3,7 +3,8 @@ function [ S ] = system_generation(N, options )
 %system. The no of masses is specified by N and options specify the constraints
 %on the system.
 % The syntax of the function is
-% S=masses_generation(N,options)
+% S=masses_generation(N,options) 
+% reference is hirarchical MPC paper example.
 
 
 default_options = struct('M', 0.5*ones(N,1), 'b', 0.1*0.1*ones(N,1),...

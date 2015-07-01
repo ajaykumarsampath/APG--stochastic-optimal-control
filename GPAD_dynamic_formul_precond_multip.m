@@ -1,7 +1,7 @@
 function [Ptree] = GPAD_dynamic_formul_precond_multip( sys,V,Tree)
 % This function calculate the off-line elements for the dynamic programming
+%  with multiplicative disturbance. 
 % step of the GPAD algorithm
-
 
 Ptree=struct('P',cell(1,1),'c',cell(1,1),'d',cell(1,1),'f',cell(1,1),...
     'Phi',cell(1,1),'Theta',cell(1,1),'sigma',cell(1,1));

@@ -57,7 +57,7 @@ for N_prb_steps=3:length(scenario_size)
                     ops.prob{i,1}=kron(ones(pm,1),pd/sum(pd));
                 end
             else
-                ops.prob{i,1}=ones(1,Ns);
+                ops.prob{i,1}=ones(Ns,1);
             end
         end
         tic

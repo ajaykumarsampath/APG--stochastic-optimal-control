@@ -3,7 +3,15 @@ function [ Z,Q] = GPAD_dynamic_multiple( sys,Ptree,Tree,Y,xinit)
 %the tree. All the off-line terms are calculated and passed as input to the
 %function. The inital x, and dual varaibles (y) and terminal F_N are
 %passed as inputs to this function
-% Z is the output and containing
+% 
+% OUTPUT------ Z        : dual gradient 
+%
+% INPUT ------- sys     : system dynamics 
+%               Ptree   : Off-line matrices
+%               Tree    : Tree structure
+%               Y       : Dual variables 
+%               xinit   : intial state
+
 
 Z.X=zeros(sys.nx,Tree.leaves(end));
 Z.U=zeros(sys.nu,Tree.ancestor(Tree.leaves(end)));

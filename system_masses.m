@@ -1,7 +1,8 @@
 function [ S ] = system_masses(N, options )
 %masses_model function is used to find the dynamic equations of N masses
 %system. The no of masses is specified by N and options specify the constraints
-%on the system.
+%on the system. (System refers to the example used in fast-MPC of boyd and panos 
+%example).
 % The syntax of the function is
 % S=masses_model(N,options)
 % system with N-1 inputs .

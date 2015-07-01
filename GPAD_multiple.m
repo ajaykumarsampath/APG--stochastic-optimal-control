@@ -9,6 +9,24 @@ function [ Z,Y,details] = GPAD_multiple(sys,Ptree,Tree,V,ops)
 
 % In this algorithm the dual variables correspond to nodes of the tree.
 
+%     INPUT----  sys : system dynamics: 
+%              Ptree : Factor step matrices 
+%              Tree  : Tree structure 
+%               ops  : GPAD_steps      : Max iterations of GPAD
+%                      GPAD_primal_inf : Termination primal infeasibility 
+%                      GPAD_dual_inf   : Termination dual infeasibility 
+%                      GPAD_alpha      : step size
+%
+%    OUTPUT-----
+%                Z   : Optimal primal values (X,U)
+%                Y   : Optimal dual values (y)
+%          details   : epsilon_avg : average primal infeasiblity 
+%                      epsilon     : primal infeasibility 
+%                      iterates    : number of iterates
+%                      gpad_solve  : time to solve the algorithm
+%                      prm_cst     : primal cost during the convergence 
+%                      dual_cst    : dual cost during the convergence 
+%                      
 
 Ns=length(Tree.leaves);% total scenarios in the tree
 Nd=length(Tree.stage);%toal nodes in the tree
