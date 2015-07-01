@@ -79,7 +79,7 @@ end
 [sys,Hessian_app]=calculate_diffnt_precondition_matrix(sys_no_precond,V,Tree...
     ,struct('use_cell',1,'use_hessian',0));
 tic;
-Ptree=GPAD_dynamic_formul_precond_multip(sys,V,Tree);
+Ptree=GPAD_factor_step_smpc(sys,V,Tree);
 toc
 ops_GPAD.steps=200;
 ops_GPAD.x0=x_rand(:,1);
@@ -113,8 +113,7 @@ for kk=1:Test_points
         prm_cst=prm_cst+Tree.prob(Tree.leaves(i))*(Z.X(:,Tree.leaves(i))'*V.Vf{i}*...
             Z.X(:,Tree.leaves(i)))+Y.yt{i}*(sys.Ft{i}*Z.X(:,Tree.leaves(i))-sys.gt{i});
     end
-    [Z_yalmip{1,3} prm_cst]
-    Z_yalmip{1,3}-prm_cst
+    %[Z_yalmip{1,3} prm_cst]
     %[max(max(Z_yalmip{1,2}(:,:)-Z.U(:,:))) min(min(Z_yalmip{1,2}(:,:)-Z.U(:,:)))]
     %[max(max(Z_yalmip{1,1}(:,:)-Z.X(:,:))) min(min(Z_yalmip{1,1}(:,:)-Z.X(:,:)))]
     

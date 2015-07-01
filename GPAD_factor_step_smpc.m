@@ -1,7 +1,13 @@
-function [Ptree] = GPAD_dynamic_formul_precond_multip( sys,V,Tree)
+function [Ptree] = GPAD_factor_step_smpc( sys,V,Tree)
 % This function calculate the off-line elements for the dynamic programming
-%  with multiplicative disturbance. 
-% step of the GPAD algorithm
+%  with multiplicative disturbance. Factor-step of the paper
+%
+%  INPUT   :    sys   : system dynamics 
+%               V     : const function that invovles, terminating cost, one
+%               for each scenario.
+%               Tree  : The tree structutre
+%
+% OUTPUT      Ptree   : A structre that constains all the matrices. 
 
 Ptree=struct('P',cell(1,1),'c',cell(1,1),'d',cell(1,1),'f',cell(1,1),...
     'Phi',cell(1,1),'Theta',cell(1,1),'sigma',cell(1,1));

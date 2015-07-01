@@ -1,6 +1,14 @@
-function [Ptree] = GPAD_dynamic_formulation_precondition( sys,V,Tree)
+function [Ptree] = GPAD_factor_regular( sys,V,Tree)
 % This function calculate the off-line elements for the dynamic programming
-% step of the GPAD algorithm
+% step of the GPAD algorithm. Factor step. The system dynamics does not
+% contain any multiplicative 
+%
+%  INPUT   :    sys   : system dynamics 
+%               V     : const function that invovles, terminating cost, one
+%               for each scenario.
+%               Tree  : The tree structutre
+%
+% OUTPUT      Ptree   : A structre that constains all the matrices. 
 
 
 Ptree=struct('P',cell(1,1),'c',cell(1,1),'d',cell(1,1),'f',cell(1,1),'h',cell(1,1),...

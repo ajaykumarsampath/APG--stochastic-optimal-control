@@ -68,7 +68,7 @@ while(j<ops.steps)
     
     %step 2: argmin of the lagrangian using dynamic programming
     %[Z,Q]=GPAD_dynamic_calculation_Ft(sys,Ptree,Tree,W,ops.x0);
-    [Z,Q]=GPAD_dynamic_multiple(sys,Ptree,Tree,W,ops.x0);
+    [Z,Q]=GPAD_solve_smpc(sys,Ptree,Tree,W,ops.x0);
     
     %details.Z{j}=Z;
     %step 3: Projection of y on the positive quadrant.

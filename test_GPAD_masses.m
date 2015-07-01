@@ -94,7 +94,7 @@ for N_prb_steps=3:length(scenario_size)
         [sys,Hessian_app]=calculate_diffnt_precondition_matrix(sys_no_precond,V,Tree...
             ,struct('use_cell',1,'use_hessian',0));
         tic;
-        Ptree=GPAD_dynamic_formul_precond_multip(sys,V,Tree);
+        Ptree=GPAD_factor_step_smpc(sys,V,Tree);
         toc
         ops_GPAD.steps=200;
         ops_GPAD.primal_inf=1e-3;
