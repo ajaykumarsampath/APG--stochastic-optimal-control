@@ -2,7 +2,8 @@
 
 This repository contains the matlab implementaion of the APG algorithm to solve the 
 stochatic optimal control problem for a system with both multiplicative and 
-additive disturbances. 
+additive disturbances.
+
 
 SYSTEM GENERATION:
 
@@ -30,5 +31,5 @@ The test-function compare the perfomace of APG algorithm in CPU, in GPU and othe
 commercial solvers. To solve it in GPUs, we create a optimization problem in headers 
 and solve it. For more information check the TB-GPAD repository. These test files 
 have complicated options to check the perfomace over a 100 inital points with different 
-scenarios and different solvers.  
+scenarios and different solvers. 
 
