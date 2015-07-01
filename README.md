@@ -7,11 +7,11 @@ additive disturbances.
 
 SYSTEM GENERATION:
 
-To test this algorithms are tested on spring-mass systems. In this case, the 
+This algorithm is tested on spring-mass systems. In this case, the 
 dynamics can have both additive and multiplicative disturbances. The 
 function "tree_generation_multiple.m" which generate the system matrices and 
-tree structure. There is a option to add multiplicative disturbance in the  
-system dynamics or not. 
+tree structure. There is an option to add multiplicative disturbance in the  
+system dynamics or not. This also generate the tree structure.
 
 
 ALGORITHMS:
@@ -27,7 +27,10 @@ projection algorithm.
 
 TEST FUNCTIONS:
 
-The test-function compare the perfomace of APG algorithm in CPU, in GPU and other 
+The main test function is "test_APG.m". This function just APG algorithm for various 
+sampling points. 
+
+In other test functions, the perfomace of APG algorithm in CPU, in GPU and other 
 commercial solvers. To solve it in GPUs, we create a optimization problem in headers 
 and solve it. For more information check the TB-GPAD repository. These test files 
 have complicated options to check the perfomace over a 100 inital points with different 
